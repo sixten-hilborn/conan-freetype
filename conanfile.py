@@ -40,20 +40,19 @@ class FreetypeConan(ConanFile):
         else:
             env_line = env.command_line
             
-        #env_line = env_line.replace('LIBS="', 'LIBS2="') # Rare error if LIBS is kept
-         
+        custom_vars = "LIBPNG_LIBS=0 BZIP2_LIBS=0" # Trick: This way it didn't look for system libs and take the env variables from env_line
+                
         self.run("cd %s" % self.folder)
-        self.run("chmod a+x %s/configure" % self.folder)
         
         self.output.warn(env_line)
         if self.settings.os == "Macos": # Fix rpath, we want empty rpaths, just pointing to lib file
             old_str = "-install_name \$rpath/"
             new_str = "-install_name "
-            replace_in_file("%s/configure" % self.folder, old_str, new_str)
-            self.run("chmod a+x %s/build-scripts/gcc-fat.sh" % self.folder)
-            configure_command = 'cd %s && CC=$(pwd)/build-scripts/gcc-fat.sh ./configure %s --with-harfbuzz=no' % (self.folder, args)
-        else:
-            configure_command = 'cd %s && %s ./configure --with-harfbuzz=no' % (self.folder, env_line)
+            replace_in_file("%s/builds/unix/configure" % self.folder, old_str, new_str)
+            
+        libpng_libs = 'LIBPNG_LIBS=%s'
+        
+        configure_command = 'cd %s && %s ./configure --with-harfbuzz=no %s' % (self.folder, env_line, custom_vars)
         self.output.warn("Configure with: %s" % configure_command)
         self.run(configure_command)
         self.run("cd %s && %s make" % (self.folder, env_line))
