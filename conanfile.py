@@ -22,7 +22,7 @@ class FreetypeConan(ConanFile):
 
     def source(self):
         zip_name = "%s.tar.gz" % self.folder
-        download("http://download.savannah.gnu.org/releases/freetype/%s" % zip_name, zip_name)
+        download("http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/%s" % zip_name, zip_name)
         unzip(zip_name)
 
     def build(self):
