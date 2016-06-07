@@ -1,4 +1,5 @@
 from conans import ConanFile
+from conans.errors import ConanException
 from conans.tools import download, unzip, replace_in_file
 import os
 import shutil
@@ -19,6 +20,8 @@ class FreetypeConan(ConanFile):
 
     def config(self):
         del self.settings.compiler.libcxx 
+        if self.settings.compiler == "Visual Studio" and self.options.shared:
+            raise ConanException("The lib CMakeLists.txt does not support creation of SHARED libs")
 
     def source(self):
         zip_name = "%s.tar.gz" % self.folder
@@ -27,13 +30,14 @@ class FreetypeConan(ConanFile):
 
     def build(self):
         if self.settings.os == "Windows":
-            self.output.error("Windows not supported yet. Contact the author on github: github.com/lasote/conan-freetype")
+            cmake = CMake(self.settings)
+            shared = "-DBUILD_SHARED_LIBS=ON" if self.options.shared else ""
+            self.run('cmake freetype-%s %s %s' % (self.version, cmake.command_line, shared))
+            self.run("cmake --build . %s" % cmake.build_config)
         else:
             self.build_with_make()
 
-   
     def build_with_make(self):
-        
         env = ConfigureEnvironment(self.deps_cpp_info, self.settings)
         if self.options.fPIC:
             env_line = env.command_line.replace('CFLAGS="', 'CFLAGS="-fPIC ')
@@ -63,15 +67,13 @@ class FreetypeConan(ConanFile):
             project, this method is called to create a defined structure:
         """
         self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
-        
+        self.copy("*freetype.lib", dst="lib", keep_path=False)
         # UNIX
         if not self.options.shared:
             self.copy(pattern="*.a", dst="lib", src="%s" % self.folder, keep_path=False)
-            self.copy(pattern="*.a", dst="lib", src="%s" % self.folder, keep_path=False)   
         else:
             self.copy(pattern="*.so*", dst="lib", src="%s" % self.folder, keep_path=False)
             self.copy(pattern="*.dylib*", dst="lib", src="%s" % self.folder, keep_path=False)
 
-    def package_info(self):  
-                
+    def package_info(self):
         self.cpp_info.libs = ["freetype"]
