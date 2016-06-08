@@ -27,6 +27,11 @@ class FreetypeConan(ConanFile):
         zip_name = "%s.tar.gz" % self.folder
         download("http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/%s" % zip_name, zip_name)
         unzip(zip_name)
+        replace_in_file("freetype-%s/CMakeLists.txt" % self.version,
+                        "project(freetype C)",
+                        """project(freetype C)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()""")
 
     def build(self):
         if self.settings.os == "Windows":
