@@ -28,19 +28,19 @@ class FreetypeConan(ConanFile):
         download("http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/%s" % zip_name, zip_name)
         unzip(zip_name)
         replace_in_file("freetype-%s/CMakeLists.txt" % self.version,
-                        "project(freetype C)",
-                        """project(freetype C)
+                        "project(freetype)",
+                        """project(freetype)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()""")
+        replace_in_file("freetype-%s/CMakeLists.txt" % self.version, "foreach (d ZLIB BZip2 PNG HarfBuzz)",
+                        "foreach (d ZLIB BZip2 HarfBuzz)")
 
     def build(self):
-        if self.settings.os == "Windows":
-            cmake = CMake(self.settings)
-            shared = "-DBUILD_SHARED_LIBS=ON" if self.options.shared else ""
-            self.run('cmake freetype-%s %s %s' % (self.version, cmake.command_line, shared))
-            self.run("cmake --build . %s" % cmake.build_config)
-        else:
-            self.build_with_make()
+        cmake = CMake(self.settings)
+        shared = "-DBUILD_SHARED_LIBS=ON" if self.options.shared else ""
+        self.run('cmake freetype-%s %s %s -DWITH_ZLIB=ON -DWITH_PNG=ON' % (self.version, cmake.command_line, shared))
+        self.run("cmake --build . %s" % cmake.build_config)
+
 
     def build_with_make(self):
         env = ConfigureEnvironment(self.deps_cpp_info, self.settings)
@@ -72,7 +72,7 @@ conan_basic_setup()""")
             project, this method is called to create a defined structure:
         """
         self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
-        self.copy("*freetype.lib", dst="lib", keep_path=False)
+        self.copy("*freetype*.lib", dst="lib", keep_path=False)
         # UNIX
         if not self.options.shared:
             self.copy(pattern="*.a", dst="lib", src="%s" % self.folder, keep_path=False)
@@ -81,4 +81,8 @@ conan_basic_setup()""")
             self.copy(pattern="*.dylib*", dst="lib", src="%s" % self.folder, keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["freetype"]
+        if self.settings.os == "Windows" and self.settings.build_type == "Debug":
+            libname = "freetyped"
+        else:
+            libname = "freetype"
+        self.cpp_info.libs = [libname]
