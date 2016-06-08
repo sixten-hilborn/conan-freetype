@@ -31,7 +31,8 @@ class FreetypeConan(ConanFile):
                         "project(freetype)",
                         """project(freetype)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()""")
+conan_basic_setup()
+set(PNG_FOUND 1)""")
         replace_in_file("freetype-%s/CMakeLists.txt" % self.version, "foreach (d ZLIB BZip2 PNG HarfBuzz)",
                         "foreach (d ZLIB BZip2 HarfBuzz)")
 
@@ -75,13 +76,13 @@ conan_basic_setup()""")
         self.copy("*freetype*.lib", dst="lib", keep_path=False)
         # UNIX
         if not self.options.shared:
-            self.copy(pattern="*.a", dst="lib", src="%s" % self.folder, keep_path=False)
+            self.copy(pattern="*.a", dst="lib", keep_path=False)
         else:
-            self.copy(pattern="*.so*", dst="lib", src="%s" % self.folder, keep_path=False)
-            self.copy(pattern="*.dylib*", dst="lib", src="%s" % self.folder, keep_path=False)
+            self.copy(pattern="*.so*", dst="lib", keep_path=False)
+            self.copy(pattern="*.dylib*", dst="lib", keep_path=False)
 
     def package_info(self):
-        if self.settings.os == "Windows" and self.settings.build_type == "Debug":
+        if self.settings.build_type == "Debug":
             libname = "freetyped"
         else:
             libname = "freetype"
