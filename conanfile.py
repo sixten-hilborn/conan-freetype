@@ -27,12 +27,14 @@ class FreetypeConan(ConanFile):
         zip_name = "%s.tar.gz" % self.folder
         download("http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/%s" % zip_name, zip_name)
         unzip(zip_name)
+        fPIC = "set(CMAKE_POSITION_INDEPENDENT_CODE ON)" if self.options.fPIC else ""
         replace_in_file("freetype-%s/CMakeLists.txt" % self.version,
                         "project(freetype)",
                         """project(freetype)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
-set(PNG_FOUND 1)""")
+set(PNG_FOUND 1)
+%s""" % fPIC)
         replace_in_file("freetype-%s/CMakeLists.txt" % self.version, "foreach (d ZLIB BZip2 PNG HarfBuzz)",
                         "foreach (d ZLIB BZip2 HarfBuzz)")
 
