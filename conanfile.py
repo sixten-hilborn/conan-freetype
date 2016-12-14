@@ -21,7 +21,7 @@ class FreetypeConan(ConanFile):
     def config(self):
         del self.settings.compiler.libcxx 
         if self.settings.compiler == "Visual Studio" and self.options.shared:
-            raise ConanException("The lib CMakeLists.txt does not support creation of SHARED libs")
+            raise ConanException("The freetype lib does not support creation of SHARED libs with Visual Studio")
 
     def source(self):
         zip_name = "%s.tar.gz" % self.folder
@@ -73,12 +73,12 @@ conan_basic_setup()
         """
         self.copy(pattern="*.h", dst="include", src="%s/include" % self.folder, keep_path=True)
         self.copy("*freetype*.lib", dst="lib", keep_path=False)
-        # UNIX
-        if not self.options.shared:
-            self.copy(pattern="*.a", dst="lib", keep_path=False)
-        else:
+        if self.options.shared:
             self.copy(pattern="*.so*", dst="lib", keep_path=False)
             self.copy(pattern="*.dylib*", dst="lib", keep_path=False)
+            self.copy(pattern="*.dll", dst="bin", src="bin", keep_path=False)
+        else:
+            self.copy(pattern="*.a", dst="lib", keep_path=False)
 
     def package_info(self):
         if self.settings.build_type == "Debug":
