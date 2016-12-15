@@ -16,7 +16,7 @@ class FreetypeConan(ConanFile):
     generators = "cmake"
     url="http://github.com/lasote/conan-freetype"
     license="MIT"
-    requires = "libpng/1.6.21@lasote/stable", "bzip2/1.0.6@lasote/stable"
+    requires = "libpng/1.6.23@lasote/stable", "bzip2/1.0.6@lasote/stable"
 
     def config(self):
         del self.settings.compiler.libcxx 
@@ -33,10 +33,7 @@ class FreetypeConan(ConanFile):
                         """project(freetype)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
-set(PNG_FOUND 1)
 %s""" % fPIC)
-        replace_in_file("freetype-%s/CMakeLists.txt" % self.version, "foreach (d ZLIB BZip2 PNG HarfBuzz)",
-                        "foreach (d ZLIB BZip2 HarfBuzz)")
 
     def build(self):
         cmake = CMake(self.settings)
