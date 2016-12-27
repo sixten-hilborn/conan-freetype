@@ -13,7 +13,7 @@ class FreetypeConan(ConanFile):
     default_options = '''shared=False
     fPIC=True'''
     generators = "cmake"
-    url="http://github.com/lasote/conan-freetype"
+    url="http://github.com/sixten-hilborn/conan-freetype"
     license="MIT"
     requires = "libpng/1.6.23@lasote/stable", "bzip2/1.0.6@lasote/stable"
 
