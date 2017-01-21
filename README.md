@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/lasote/conan-freetype.svg)](https://travis-ci.org/lasote/conan-freetype)
-
+[![Build Status](https://travis-ci.org/sixten-hilborn/conan-freetype.svg?branch=release/2.6.3)](https://travis-ci.org/sixten-hilborn/conan-freetype)
+[![Build status](https://ci.appveyor.com/api/projects/status/3ojrl9s1umgr09jw?svg=true)](https://ci.appveyor.com/project/sixten-hilborn/conan-freetype)
 
 # conan-freetype
 
 [Conan.io](https://conan.io) package for freetype library
 
-The packages generated with this **conanfile** can be found in [conan.io](https://conan.io/source/freetype/2.6.3/lasote/stable).
+The packages generated with this **conanfile** can be found in [conan.io](https://conan.io/source/freetype/2.6.3/hilborn/stable).
 
 ## Build packages
 
@@ -15,23 +15,23 @@ Download conan client from [Conan.io](https://conan.io) and run:
 
 ## Upload packages to server
 
-    $ conan upload freetype/2.0.3@lasote/stable --all
+    $ conan upload freetype/2.0.3@hilborn/stable --all
     
 ## Reuse the packages
 
 ### Basic setup
 
-    $ conan install freetype/2.0.3@lasote/stable
+    $ conan install freetype/2.0.3@hilborn/stable
     
 ### Project setup
 
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
     
     [requires]
-    freetype/2.0.3@lasote/stable
+    freetype/2.0.3@hilborn/stable
 
     [options]
-    freetype:shared=true # false
+    freetype:shared=True # False
     
     [generators]
     txt

@@ -3,8 +3,8 @@ from conans import GCC, CMake
 import os
 
 ############### CONFIGURE THESE VALUES ##################
-default_user = "lasote"
-default_channel = "testing"
+default_user = "hilborn"
+default_channel = "stable"
 #########################################################
 
 channel = os.getenv("CONAN_CHANNEL", default_channel)

@@ -6,8 +6,8 @@ environment:
     
     CONAN_UPLOAD: 1
     CONAN_REFERENCE: "freetype/2.6.3"
-    CONAN_USERNAME: "lasote"
-    CONAN_CHANNEL: "ci"
+    CONAN_USERNAME: "hilborn"
+    CONAN_CHANNEL: "stable"
     CONAN_TOTAL_PAGES: 4
     
     matrix:
