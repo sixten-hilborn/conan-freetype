@@ -1,9 +1,8 @@
-from conans import ConanFile
+from conans import ConanFile, CMake
 from conans.errors import ConanException
 from conans.tools import download, unzip, replace_in_file
 import os
 import shutil
-from conans import CMake, ConfigureEnvironment
 
 class FreetypeConan(ConanFile):
     name = "freetype"
@@ -40,32 +39,6 @@ conan_basic_setup()
         shared = "-DBUILD_SHARED_LIBS=ON" if self.options.shared else ""
         self.run('cmake freetype-%s %s %s -DWITH_ZLIB=ON -DWITH_PNG=ON' % (self.version, cmake.command_line, shared))
         self.run("cmake --build . %s" % cmake.build_config)
-
-
-    def build_with_make(self):
-        env = ConfigureEnvironment(self.deps_cpp_info, self.settings)
-        if self.options.fPIC:
-            env_line = env.command_line.replace('CFLAGS="', 'CFLAGS="-fPIC ')
-        else:
-            env_line = env.command_line
-            
-        custom_vars = "LIBPNG_LIBS=0 BZIP2_LIBS=0" # Trick: This way it didn't look for system libs and take the env variables from env_line
-                
-        self.run("cd %s" % self.folder)
-        
-        self.output.warn(env_line)
-        if self.settings.os == "Macos": # Fix rpath, we want empty rpaths, just pointing to lib file
-            old_str = "-install_name \$rpath/"
-            new_str = "-install_name "
-            replace_in_file("%s/builds/unix/configure" % self.folder, old_str, new_str)
-            
-        libpng_libs = 'LIBPNG_LIBS=%s'
-        
-        configure_command = 'cd %s && %s ./configure --with-harfbuzz=no %s' % (self.folder, env_line, custom_vars)
-        self.output.warn("Configure with: %s" % configure_command)
-        self.run(configure_command)
-        self.run("cd %s && %s make" % (self.folder, env_line))
-
 
     def package(self):
         """ Define your conan structure: headers, libs and data. After building your
