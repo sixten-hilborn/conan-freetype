@@ -15,7 +15,7 @@ class FreetypeConan(ConanFile):
     generators = "cmake"
     url="http://github.com/sixten-hilborn/conan-freetype"
     license="MIT"
-    requires = "libpng/1.6.23@lasote/stable", "bzip2/1.0.6@lasote/stable"
+    requires = "libpng/1.6.23@lasote/ci", "bzip2/1.0.6@lasote/stable"
 
     def config(self):
         del self.settings.compiler.libcxx 
